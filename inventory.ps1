@@ -61,20 +61,6 @@ if ($manuname.PCSystemType -eq 0){$objectTypeId=52}
 
 if ($compinfo.Name.ToLower() -match 'srv') {$objectTypeId=52}
 
-if ($objectTypeId -eq 42){
-$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460)
-}
-
-if ($objectTypeId -eq 41){
-$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439)
-}
-
-if ($objectTypeId -eq 52){
-$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
-}
-
-
-
 $computer='localhost'
 $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -ExpandProperty username -ErrorAction Stop 
 
@@ -118,7 +104,20 @@ ForEach ($item in $allobj.objectEntries){
 }
 
 $invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
-$invnumber
+
+if ($objectTypeId -eq 42){
+$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460)
+}
+
+if ($objectTypeId -eq 41){
+$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439)
+}
+
+if ($objectTypeId -eq 52){
+$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
+$invnumber='N\\A'
+}
+
 
 ##########update device id#############
 $updateurl=$updateurl+$deviceid
