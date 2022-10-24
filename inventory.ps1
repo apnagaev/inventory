@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=f
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
 cls
-$ver='2.1'
+$ver='2.2'
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
@@ -89,6 +89,7 @@ if ($user -eq $null){
     }
 }
 if ($user -match 'ATOL\\'){$user = $user -replace 'ATOL\\',''}
+if ($user -match 'NAGAEV\\'){$user = $user -replace 'NAGAEV\\',''}
 
 if ($user -notmatch '@atol.ru'){$user = $user + '@atol.ru'}
 #$user = $user -replace '\.',''
