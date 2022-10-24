@@ -44,9 +44,15 @@ ForEach ($item in $allnet){
     }
 }
 
-
-if ($manuname.PCSystemType -eq 2){$objectTypeId=42}
 if ($manuname.PCSystemType -eq 1){$objectTypeId=37}
+if ($manuname.PCSystemType -eq 2){$objectTypeId=42}
+if ($manuname.PCSystemType -eq 3){$objectTypeId=37}
+if ($manuname.PCSystemType -eq 4){$objectTypeId=52}
+if ($manuname.PCSystemType -eq 5){$objectTypeId=52}
+if ($manuname.PCSystemType -eq 6){$objectTypeId=52}
+if ($manuname.PCSystemType -eq 7){$objectTypeId=52}
+if ($manuname.PCSystemType -eq 8){$objectTypeId=52}
+if ($manuname.PCSystemType -eq 0){$objectTypeId=52}
 
 $computer='localhost'
 $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -ExpandProperty username -ErrorAction Stop 
@@ -190,14 +196,11 @@ $body='{
     {"objectTypeAttributeId": 460,
       "objectAttributeValues": [
         {
-          "value":"'+$localip.IPAddress+'"
+          "value":"'+$PCSystemType+' '+$localip.IPAddress+'"
         }
       ]}
   ]
 }'
 
 
-
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
-#$body
-
