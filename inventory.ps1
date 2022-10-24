@@ -1,4 +1,3 @@
-#########################
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
@@ -91,14 +90,6 @@ $userurl=$userurl+$user
 $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -f $base64)}
 
 
-##########find device id#############
-ForEach ($item in $allobj.objectEntries){
-    if ($compinfo.Name -eq $item.name){
-    $item.name
-    $item.id
-    $deviceid=$item.id
-    }
-}
 
 $invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
 
@@ -118,6 +109,17 @@ $invnumber='N\\A'
 $allurlpc=$allurl+'&qlQuery=objectType="Servers"'
 }
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
+
+
+##########find device id#############
+ForEach ($item in $allobj.objectEntries){
+    if ($compinfo.Name -eq $item.name){
+    $item.name
+    $item.id
+    $deviceid=$item.id
+    }
+}
+
 
 ##########check object and create if null#############
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
