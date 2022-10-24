@@ -1,3 +1,10 @@
+#############################
+$createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
+$updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
+$allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=false&resultPerPage=999999'
+$userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
+####################################
+
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
