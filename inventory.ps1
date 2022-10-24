@@ -5,7 +5,6 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=f
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
 cls
-$ver='2.0'
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
@@ -134,7 +133,6 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     $body
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
-$body
 
 
 
