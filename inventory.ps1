@@ -103,18 +103,18 @@ $invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
 
 if ($objectTypeId -eq 42){
 $attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562)
-$allurlpc=$allurl+'&qlQuery=objectType="Ноутбуки"'
+$allurlpc=$allurl+'&qlQuery=objectType="Laptops"'
 }
 
 if ($objectTypeId -eq 41){
 $attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561)
-$allurlpc=$allurl+'&qlQuery=objectType="Компьютеры"'
+$allurlpc=$allurl+'&qlQuery=objectType="Computers"'
 }
 
 if ($objectTypeId -eq 52){
 $attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
 $invnumber='N\\A'
-$allurlpc=$allurl+'&qlQuery=objectType="Сервера"'
+$allurlpc=$allurl+'&qlQuery=objectType="Servers"'
 }
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
 
@@ -373,4 +373,5 @@ $body='{
 }'
 $body
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+
 
