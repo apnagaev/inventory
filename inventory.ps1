@@ -4,8 +4,8 @@ $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
 $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=false&resultPerPage=999999'
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
-
 cls
+
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
@@ -146,7 +146,7 @@ $updateurl=$updateurl+$deviceid
 #$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
 $userkeykey=$userkey.key
 
-$object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
+$object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 ForEach ($item in $object.attributes){
     if ($item.objectTypeAttributeId -eq 409){
     if ($user -eq $null){$user=$item.objectAttributeValues.value}
@@ -259,7 +259,7 @@ $body='{
   ]
 }'
 
-Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $i=0
 $allurl=$allurl+'&qlQuery=objectType="Программное обеспечение"'
 $allsoft=Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
@@ -308,7 +308,7 @@ foreach ($item in $soft){
 		            }
 	            ]
             }'
-            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 
              }
 
@@ -337,7 +337,7 @@ foreach ($item in $soft){
 		            }
 	            ]
             }'
-            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
         }
     }
 }
@@ -382,6 +382,6 @@ $body='{
 	}]
 }'
 $body
-Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 
 
