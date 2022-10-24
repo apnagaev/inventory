@@ -5,6 +5,7 @@ Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 $allobj = Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
 
+
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
 $manuname | ConvertTo-Json
@@ -44,16 +45,34 @@ ForEach ($item in $allnet){
     }
 }
 
-if ($manuname.PCSystemType -eq 1){$objectTypeId=37}
+
+
+if ($manuname.PCSystemType -eq 1){$objectTypeId=41}
 if ($manuname.PCSystemType -eq 2){$objectTypeId=42}
-if ($manuname.PCSystemType -eq 3){$objectTypeId=37}
+if ($manuname.PCSystemType -eq 3){$objectTypeId=41}
 if ($manuname.PCSystemType -eq 4){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 5){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 6){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 7){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 8){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 0){$objectTypeId=52}
+
 if ($compinfo.Name.ToLower() -match 'srv') {$objectTypeId=52}
+
+if ($objectTypeId -eq 42){
+$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460)
+}
+
+if ($objectTypeId -eq 41){
+$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439)
+}
+
+$objectTypeId=52
+if ($objectTypeId -eq 52){
+$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
+}
+
+
 
 $computer='localhost'
 $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -ExpandProperty username -ErrorAction Stop 
@@ -82,7 +101,7 @@ $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -
 
 ##########check object and create if null#############
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name -match $_ })) {
-    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
+    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     $body=$body
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
 }
@@ -110,91 +129,91 @@ $body='{
   "objectSchemaKey":"'+$objectSchemaKey+'",
   "objectTypeId":'+$objectTypeId+',
   "attributes": [
-    {"objectTypeAttributeId": 342,
+    {"objectTypeAttributeId":'+$attributevar[0]+',
       "objectAttributeValues": [
         {
           "value":"'+$compinfo.Name.ToLower()+'"
         }
       ]},
-    {"objectTypeAttributeId": "386",
+    {"objectTypeAttributeId":'+$attributevar[1]+',
       "objectAttributeValues": [
         {
           "value":"'+$invnumber+'"
         }
       ]},
-    {"objectTypeAttributeId": 395,
+    {"objectTypeAttributeId":'+$attributevar[2]+',
       "objectAttributeValues": [
         {
           "value":"'+$compinfo.Name+'"
         }
       ]},
-    {"objectTypeAttributeId": 410,
+    {"objectTypeAttributeId":'+$attributevar[3]+',
       "objectAttributeValues": [
         {
           "value":"'+$manuname.Manufacturer+'"
         }
       ]},
-    {"objectTypeAttributeId": 408,
+    {"objectTypeAttributeId":'+$attributevar[4]+',
       "objectAttributeValues": [
         {
           "value":"'+$manuname.Model+'"
         }
       ]},
-    {"objectTypeAttributeId": 411,
+    {"objectTypeAttributeId":'+$attributevar[5]+',
       "objectAttributeValues": [
         {
           "value":"'+$memory+'"
         }
       ]},
-    {"objectTypeAttributeId": 397,
+    {"objectTypeAttributeId":'+$attributevar[6]+',
       "objectAttributeValues": [
         {
           "value":"'+$serial+'"
         }
       ]},
-    {"objectTypeAttributeId": 414,
+    {"objectTypeAttributeId":'+$attributevar[7]+',
       "objectAttributeValues": [
         {
           "value":"'+$winver+'"
         }
       ]},
-    {"objectTypeAttributeId": 406,
+    {"objectTypeAttributeId":'+$attributevar[8]+',
       "objectAttributeValues": [
         {
           "value":"'+$cpu.name+'"
         }
       ]},
-    {"objectTypeAttributeId": 412,
+    {"objectTypeAttributeId":'+$attributevar[9]+',
       "objectAttributeValues": [
         {
           "value":"'+$disk+'"
         }
       ]},
-    {"objectTypeAttributeId": 458,
+    {"objectTypeAttributeId":'+$attributevar[10]+',
       "objectAttributeValues": [
         {
           "value":"'+$mac+'"
         }
       ]},
-    {"objectTypeAttributeId": 385,
+    {"objectTypeAttributeId":'+$attributevar[11]+',
       "objectAttributeValues": [
         {
           "value":"'+$userkey.key+'"
         }
       ]},
-    {"objectTypeAttributeId": 409,
+    {"objectTypeAttributeId":'+$attributevar[12]+',
       "objectAttributeValues": [
         {
           "value":"'+$user+'"
         }
       ]},
-    {"objectTypeAttributeId": 413,
+    {"objectTypeAttributeId":'+$attributevar[13]+',
       "objectAttributeValues": [
         {
           "value":"'+$motherboard+'"
         }
       ]},
-    {"objectTypeAttributeId": 460,
+    {"objectTypeAttributeId":'+$attributevar[14]+',
       "objectAttributeValues": [
         {
           "value":"'+$PCSystemType+' '+$localip.IPAddress+'"
@@ -205,3 +224,4 @@ $body='{
 
 
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+#$body
