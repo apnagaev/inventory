@@ -1,9 +1,10 @@
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
+$hostsoft=''
 Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
-$allobj = Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
+
 
 
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
@@ -89,14 +90,6 @@ $userurl=$userurl+$user
 $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -f $base64)}
 
 
-##########check object and create if null#############
-if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name -match $_ })) {
-    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
-    $body=$body
-    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
-}
-$body
-
 ##########find device id#############
 ForEach ($item in $allobj.objectEntries){
     if ($compinfo.Name -eq $item.name){
@@ -109,17 +102,31 @@ ForEach ($item in $allobj.objectEntries){
 $invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
 
 if ($objectTypeId -eq 42){
-$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460)
+$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562)
+$allurlpc=$allurl+'&qlQuery=objectType="Ноутбуки"'
 }
 
 if ($objectTypeId -eq 41){
-$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439)
+$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561)
+$allurloc=$allurl+'&qlQuery=objectType="Компьютеры"'
 }
 
 if ($objectTypeId -eq 52){
 $attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
 $invnumber='N\\A'
+$allurloc=$allurl+'&qlQuery=objectType="Сервера"'
 }
+$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
+
+##########check object and create if null#############
+if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name -match $_ })) {
+    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
+    $body
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+}
+$body
+
+
 
 
 ##########update device id#############
@@ -242,5 +249,128 @@ $body='{
   ]
 }'
 
-
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+$i=0
+$allurl=$allurl+'&qlQuery=objectType="Программное обеспечение"'
+$allsoft=Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
+$soft = wmic product get name,version /format:csv
+$soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
+$item=''
+foreach ($item in $soft){
+    if ($item.name -ne ''){
+    $item.name = $item.name -replace '\+',''
+    $item.name = $item.name -replace '\)','|'
+    $item.name = $item.name -replace '\(','|'
+        foreach ($itm in $allsoft.objectEntries){
+        $item.name
+        $itm.label
+        #if ($item.name -eq $itm.objectEntries.label){
+        if ($null -ne ($allsoft.objectEntries.name | ? { $item.name -match $_ })) {
+            write-host('voshli')
+            $item.name
+            $item.version
+            $itm.label
+             if ($null -ne ($allsoft.objectEntries.attributes.objectAttributeValues.value | ? { $item.version -match $_ })) {
+             write-host('popalo')
+             $itm.objectKey
+             $hostsoft=$itm.objectKey+';'+$hostsoft
+             }
+             else{
+             write-host('ne popalo')
+             $item.name
+             $item.version
+
+
+             $body='{
+	            "objectSchemaKey": "'+$objectSchemaKey+'",
+	            "objectTypeId": 53,
+	            "attributes": [{
+			        "objectTypeAttributeId": 467,
+			            "objectAttributeValues": [{
+				            "value": "'+$item.name+'"
+			            }]
+		            },
+		            {
+			            "objectTypeAttributeId": 558,
+			            "objectAttributeValues": [{
+				            "value": "'+$item.version+'"
+			            }]
+		            }
+	            ]
+            }'
+            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+
+             }
+
+        }
+        #break :outer
+        else{
+        write-host('ne voshli')
+        write-host('local'+$item.name)
+        write-host('jirasm'+$itm.label)
+        
+        
+        $body='{
+	            "objectSchemaKey": "'+$objectSchemaKey+'",
+	            "objectTypeId": 53,
+	            "attributes": [{
+			        "objectTypeAttributeId": 467,
+			            "objectAttributeValues": [{
+				            "value": "'+$item.name+'"
+			            }]
+		            },
+		            {
+			            "objectTypeAttributeId": 558,
+			            "objectAttributeValues": [{
+				            "value": "'+$item.version+'"
+			            }]
+		            }
+	            ]
+            }'
+            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+        }
+    }
+}
+}
+
+
+  
+
+$body='{
+	"objectSchemaKey": "'+$objectSchemaKey+'",
+	"attributes": [{
+		"objectTypeAttributeId": "'+$attributevar[15]+'",
+		"objectAttributeValues": [{
+				"value": "SCHINV-143"
+			},
+			{
+				"value": "SCHINV-150"
+			}
+		]
+	}]
+}'
+#
+
+$attach = $hostsoft -split ';'
+$attach = $attach | select -uniq
+
+$att=''
+foreach ($item in $attach){
+    $att=$att+'{
+				"value":"'+$item+'"
+			},'
+
+}
+$att=$att -replace ".{1}$"
+
+$body='{
+	"objectSchemaKey": "'+$objectSchemaKey+'",
+	"attributes": [{
+		"objectTypeAttributeId": "'+$attributevar[15]+'",
+		"objectAttributeValues": ['+$att+'
+		]
+	}]
+}'
+$body
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+
