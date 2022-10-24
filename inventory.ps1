@@ -100,6 +100,7 @@ $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -
 
 
 $invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
+if ($compinfo.Name -notmatch "^\d+$"){$invnumber='N\\A'}
 
 if ($objectTypeId -eq 42){
 $attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562)
