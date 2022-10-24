@@ -125,6 +125,23 @@ $updateurl=$updateurl+$deviceid
 #$body='{"objectSchemaKey":"$objectSchemaKey", "objectTypeId": $objectTypeId,"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "$compinfo.Name"}]}]}'
 
 #$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
+$userkeykey=$userkey.key
+
+$object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
+ForEach ($item in $object.attributes){
+    if ($item.objectTypeAttributeId -eq 409){
+    if ($user -eq $null){$user=$item.objectAttributeValues.value}
+    }
+}
+ForEach ($item in $object.attributes){
+    if ($item.objectTypeAttributeId -eq 385){
+    $item.objectAttributeValues.searchValue
+    #$user=$item.objectAttributeValues.value
+    if ($item.objectAttributeValues.searchValue -ne $null){$userkeykey=$item.objectAttributeValues.searchValue}
+    }
+}
+
+
 
 $body='{
   "objectSchemaKey":"'+$objectSchemaKey+'",
@@ -199,7 +216,7 @@ $body='{
     {"objectTypeAttributeId":'+$attributevar[11]+',
       "objectAttributeValues": [
         {
-          "value":"'+$userkey.key+'"
+          "value":"'+$userkeykey+'"
         }
       ]},
     {"objectTypeAttributeId":'+$attributevar[12]+',
