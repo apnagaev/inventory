@@ -35,7 +35,9 @@ $memory=[math]::Round([long]$manuname.TotalPhysicalMemory/([math]::Pow(1024,3)),
 $PCSystemType
 $winver='Windows '+[System.Environment]::OSVersion.Version.Major+' '+(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion).DisplayVersion+' Build '+[System.Environment]::OSVersion.Version.Build
 $cpu = Get-WmiObject -Class Win32_Processor | select *
-$cpu.name
+$cpu.name.Count
+if ($cpu.name.Count -gt 1){$rcpu = $cpu.name[0]} else {$rcpu = $cpu.name}
+$rcpu
 $disk = Get-PhysicalDisk
 $disk=$disk.MediaType+' '+$disk.FriendlyName+' '+[math]::Round([long]$disk.size/([math]::Pow(1024,3)),0)+'Gb'
 $allnet = get-netadapter
@@ -180,7 +182,7 @@ $body='{
     {"objectTypeAttributeId":'+$attributevar[8]+',
       "objectAttributeValues": [
         {
-          "value":"'+$cpu.name+'"
+          "value":"'+$rcpu+'"
         }
       ]},
     {"objectTypeAttributeId":'+$attributevar[9]+',
@@ -224,4 +226,3 @@ $body='{
 
 
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
-#$body
