@@ -1,3 +1,4 @@
+#########################
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
@@ -122,7 +123,7 @@ $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     $body
-    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 $body
 
