@@ -33,7 +33,10 @@ if ($manuname.PCSystemType -eq '0') {$PCSystemType = 'unspecified'}
 if ($manuname.PCSystemType -eq '3') {$PCSystemType = 'Workstation'}
 $memory=[math]::Round([long]$manuname.TotalPhysicalMemory/([math]::Pow(1024,3)),0)
 $PCSystemType
+try{
 $winver='Windows '+[System.Environment]::OSVersion.Version.Major+' '+(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion).DisplayVersion+' Build '+[System.Environment]::OSVersion.Version.Build
+}
+catch {$winver=(Get-WmiObject -class Win32_OperatingSystem).Caption}
 $cpu = Get-WmiObject -Class Win32_Processor | select *
 $cpu.name.Count
 if ($cpu.name.Count -gt 1){$rcpu = $cpu.name[0]} else {$rcpu = $cpu.name}
