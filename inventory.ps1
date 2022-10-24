@@ -53,6 +53,7 @@ if ($manuname.PCSystemType -eq 6){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 7){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 8){$objectTypeId=52}
 if ($manuname.PCSystemType -eq 0){$objectTypeId=52}
+if ($compinfo.Name.ToLower() -match 'srv') {$objectTypeId=52}
 
 $computer='localhost'
 $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -ExpandProperty username -ErrorAction Stop 
@@ -81,7 +82,7 @@ $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -
 
 ##########check object and create if null#############
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name -match $_ })) {
-    $body='{"objectSchemaKey":"$objectSchemaKey", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
+    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     $body=$body
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
 }
