@@ -108,13 +108,13 @@ $allurlpc=$allurl+'&qlQuery=objectType="Ноутбуки"'
 
 if ($objectTypeId -eq 41){
 $attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561)
-$allurloc=$allurl+'&qlQuery=objectType="Компьютеры"'
+$allurlpc=$allurl+'&qlQuery=objectType="Компьютеры"'
 }
 
 if ($objectTypeId -eq 52){
 $attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
 $invnumber='N\\A'
-$allurloc=$allurl+'&qlQuery=objectType="Сервера"'
+$allurlpc=$allurl+'&qlQuery=objectType="Сервера"'
 }
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
 
