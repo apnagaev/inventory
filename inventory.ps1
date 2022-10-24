@@ -5,6 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=f
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
 cls
+$ver='2.1'
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
