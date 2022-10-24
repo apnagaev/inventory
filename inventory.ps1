@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=f
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
 cls
-
+$ver='2.0'
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
@@ -260,6 +260,8 @@ $body='{
 }'
 
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+$updateurl
+$body
 $i=0
 $allurl=$allurl+'&qlQuery=objectType="Программное обеспечение"'
 $allsoft=Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
