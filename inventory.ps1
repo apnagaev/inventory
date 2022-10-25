@@ -1,18 +1,23 @@
 #############################
 $createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
 $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
-$allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=false&resultPerPage=999999'
+$allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=999999'
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
+$objectSchemaKey='SCHINV'
 ####################################
-ver='2.5'
+ver='2.6'
+#########################
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
+$allobj=''
+$invnumber='n\\a'
+$jirasmsoft=''
 Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 
-'
+
 
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
@@ -95,29 +100,32 @@ if ($user -notmatch '@atol.ru'){$user = $user + '@atol.ru'}
 #$user = $user -replace '\.',''
 
 $userurl=$userurl+$user
+$userkey
 $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -f $base64)}
 
 
-
-$invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}
+$compinfo.Name
+if ($invnumber -match "\d+$"){$invnumber = $invnumber -match "\d+"|%{$matches[0]}}
+$invnumber
 
 if ($objectTypeId -eq 42){
 $attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562)
-$allurlpc=$allurl+'&qlQuery=objectType="Laptops"'
+$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
 if ($objectTypeId -eq 41){
 $attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561)
-$allurlpc=$allurl+'&qlQuery=objectType="Computers"'
+$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Computers"'
 }
 
 if ($objectTypeId -eq 52){
 $attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
 $invnumber='N\\A'
-$allurlpc=$allurl+'&qlQuery=objectType="Servers"'
+$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Servers"'
 }
-$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
 
+$allurlpc
+$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
 
 ##########find device id#############
 ForEach ($item in $allobj.objectEntries){
@@ -133,6 +141,7 @@ ForEach ($item in $allobj.objectEntries){
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     $body
+    Write-Host ('create new object')
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
@@ -259,6 +268,8 @@ $body='{
   ]
 }'
 
+$body=$body -replace '\\',''
+
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $updateurl
 $body
@@ -267,157 +278,78 @@ $c=0
 
 $soft = wmic product get name,version /format:csv
 $soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
-#$allurl=$allurl+'&qlQuery=objectType="Software"'
-#$allsoft=Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
-
 $soft
 
 
+#foreach ($item1 in $soft){
+#$item1.name = $item1.name -replace '\+',''
+#$item1.name = $item1.name -replace '\)','|'
+#$item1.name = $item1.name -replace '\(','|'
 
-    #$allurl=$allurl+'&qlQuery=Name="'+$item.name+'"'
-    #$alleqsoft=Invoke-RestMethod -Uri $allurl -Headers @{Authorization=("Basic {0}" -f $base64)}
+#    foreach ($item2 in $alleqsoft){
+        
+    
+#    }
+#}
+$i=0
+$allsofturl=$allurl+'&qlQuery=objectType="Software"'
+$allsofturl
+$alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)}
+$alljsmsoft
+foreach ($jsmitem in $alljsmsoft.objectEntries){
+    #$jsmitem.name
+    #$jsmitem.attributes.objectAttributeValues.value[1]
+    $jirasmsoft=$jirasmsoft+$jsmitem.name+','+$jsmitem.attributes.objectAttributeValues.value[1]+','+$jsmitem.objectKey+"`n"
+}
 
-    foreach ($item in $soft){
-        $item.name = $item.name -replace '\+',''
-        $item.name = $item.name -replace '\)','|'
-        $item.name = $item.name -replace '\(','|'
-        $allequrl=$allurl+'&qlQuery=Name="'+$item.name+'"'
-        $allequrl
-        $alleqsoft=Invoke-RestMethod -Uri $allequrl -Headers @{Authorization=("Basic {0}" -f $base64)}
-            if($null -eq ($alleqsoft.objectEntries.name | ? { $item.name -match $_ })){
-            $body='{
-	            "objectSchemaKey": "'+$objectSchemaKey+'",
-	            "objectTypeId": 53,
-	            "attributes": [{
-			        "objectTypeAttributeId": 467,
-			            "objectAttributeValues": [{
-				            "value": "'+$item.name+'"
-			            }]
-		            },
-		            {
-			            "objectTypeAttributeId": 558,
-			            "objectAttributeValues": [{
-				            "value": "'+$item.version+'"
-			            }]
-		            }
-	            ]
-            }'
-            write-host('create name')
-            $c=$c+1
-            Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
-                }
+$jirasmsoft = $jirasmsoft | ConvertFrom-Csv -Delimiter ',' -Header 'name','version','objkey'
+#$jirasmsoft
+#$soft
+
+
+foreach ($softitem in $soft){
+$i=0
+$softnv=$softitem.name+','+$softitem.version
+    foreach ($jsmitem in $jirasmsoft){
+        $jsmnv=$jsmitem.name+','+$jsmitem.version
+            if($softnv -eq $jsmnv){
+            #$softnv
+            Write-Host('dont create, exit')
+            $i=$i+1
+            $i    
+            $jsmitem.objkey
+            $hostsoft=$jsmitem.objkey+';'+$hostsoft           
+            break  
             }
-
-foreach ($item in $soft){
-        $item.name = $item.name -replace '\+',''
-        $item.name = $item.name -replace '\)','|'
-        $item.name = $item.name -replace '\(','|'
-        $allequrl=$allurl+'&qlQuery=Name="'+$item.name+'"'
-        $alleqsoft=Invoke-RestMethod -Uri $allequrl -Headers @{Authorization=("Basic {0}" -f $base64)}
-
-               foreach ($itm in $alleqsoft.objectEntries){
-                            $itmtmp = $itm.attributes -match 558
-                            #$itmtmp.objectAttributeValues.value
-                    if($item.name -eq $itm.name){
-                        if($null -eq ($itm.attributes.objectAttributeValues.value | ? { $item.version -match $_ })){
-                        $body='{
-	            "objectSchemaKey": "'+$objectSchemaKey+'",
-	            "objectTypeId": 53,
-	            "attributes": [{
-			        "objectTypeAttributeId": 467,
-			            "objectAttributeValues": [{
-				            "value": "'+$item.name+'"
-			            }]
-		            },
-		            {
-			            "objectTypeAttributeId": 558,
-			            "objectAttributeValues": [{
-				            "value": "'+$item.version+'"
-			            }]
-		            }
-	            ]
-            }'
-                    write-host('create version')
-                    $c=$c+1
-                    #Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
-            
-            }
-                    }
-               
-               
-               }
     }
 
 
-
-
-
-$c
-
-    
-
-    foreach ($item in $soft){
-        $item.name = $item.name -replace '\+',''
-        $item.name = $item.name -replace '\)','|'
-        $item.name = $item.name -replace '\(','|'
-        $allequrl=$allurl+'&qlQuery=Name="'+$item.name+'"'
-        #$allequrl
-        $alleqsoft=Invoke-RestMethod -Uri $allequrl -Headers @{Authorization=("Basic {0}" -f $base64)}
-            foreach ($itm in $alleqsoft.objectEntries){
-                if ($item.name -eq $itm.name){
-                    $itmtmp = $itm.attributes -match 558
-                        foreach ($it in $itmtmp.objectAttributeValues.value){
-                            if ($item.version -eq $it){
-                                $itm.objectKey
-                                $hostsoft=$itm.objectKey+';'+$hostsoft
-                            
-                            
-                            
-                                    }
-                        }
-                    
-                
-                }
-
-
-            }
-
-
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+$i
+if ($i -eq 0){
+#$softnv
 $body='{
-	"objectSchemaKey": "'+$objectSchemaKey+'",
-	"attributes": [{
-		"objectTypeAttributeId": "'+$attributevar[15]+'",
-		"objectAttributeValues": [{
-				"value": "SCHINV-143"
-			},
-			{
-				"value": "SCHINV-150"
-			}
-		]
-	}]
-}'
-#
+	            "objectSchemaKey": "'+$objectSchemaKey+'",
+	            "objectTypeId": 53,
+	            "attributes": [{
+			        "objectTypeAttributeId": 467,
+			            "objectAttributeValues": [{
+				            "value": "'+$softitem.name+'"
+			            }]
+		            },
+		            {
+			            "objectTypeAttributeId": 558,
+			            "objectAttributeValues": [{
+				            "value": "'+$softitem.version+'"
+			            }]
+		            }
+	            ]
+            }'
+    Write-Host('Create object')
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+    }
+}
+
+
 
 $attach = $hostsoft -split ';'
 $attach = $attach | select -uniq
@@ -439,6 +371,6 @@ $body='{
 		]
 	}]
 }'
-$body
+#$body
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
-$c
+
