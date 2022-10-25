@@ -8,6 +8,8 @@ $objectSchemaKey='SCHINV'
 ver='2.9'
 #########################
 cls
+$sleep = Get-Random -Maximum 300
+start-sleep $sleep
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
 $hostsoft=''
