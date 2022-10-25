@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='2.8'
+ver='2.9'
 #########################
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
@@ -101,7 +101,7 @@ if ($user -notmatch '@atol.ru'){$user = $user + '@atol.ru'}
 
 $userurl=$userurl+$user
 $userkey
-$userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=("Basic {0}" -f $base64)}
+$userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=('Basic {0}' -f $base64)}
 
 
 $compinfo.Name
