@@ -4,7 +4,7 @@ $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
 $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?ncludeAttributes=false&resultPerPage=999999'
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 ####################################
-ver='2.4'
+ver='2.5'
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
@@ -339,7 +339,7 @@ foreach ($item in $soft){
             }'
                     write-host('create version')
                     $c=$c+1
-                    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+                    #Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
             
             }
                     }
