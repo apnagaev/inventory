@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='2.6'
+ver='2.7'
 #########################
 cls
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
@@ -83,7 +83,7 @@ $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -Exp
 if ($user -eq $null){
     $rdp = QUERY SESSION
     $rdp = $rdp  -replace "\s+", ";"
-    $rdp = $rdp  -replace "Active", "Активно"
+    $rdp = $rdp  -replace 'Active', 'Активно'
     $rdp = $rdp -match 'rdp-tcp#'
     $rdp = $rdp -match 'Активно'
     $rdp = $rdp | ConvertFrom-Csv -Delimiter ';' -Header 'session','user','id','status'
