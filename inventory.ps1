@@ -12,7 +12,7 @@ $hostsoft=''
 Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 
-
+'
 
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
