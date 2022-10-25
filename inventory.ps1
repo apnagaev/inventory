@@ -5,10 +5,10 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.0'
+ver='3.0.1'
 #########################
 cls
-$sleep = Get-Random -Maximum 300
+$sleep = Get-Random -Maximum 900
 start-sleep $sleep
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
 $mac=''
