@@ -279,6 +279,7 @@ $i=0
 $c=0
 
 $soft = wmic product get name,version /format:csv
+$soft = $soft | select -uniq
 $soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
 $soft
 
