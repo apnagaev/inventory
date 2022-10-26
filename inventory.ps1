@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.1'
+ver='3.0.2'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -107,7 +107,7 @@ $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=('Basic {0}' -
 
 
 $compinfo.Name
-if ($invnumber -match "\d+$"){$invnumber = $invnumber -match "\d+"|%{$matches[0]}}
+if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}}
 $invnumber
 
 if ($objectTypeId -eq 42){
