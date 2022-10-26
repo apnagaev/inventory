@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.4'
+ver='3.0.5'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -99,6 +99,7 @@ if ($user -eq $null){
     
     if (($rdp[0].user -ne '') -and ($rdp[0].user -ne $null)){
         $user = $rdp[0].user
+	if ($user -match 'rdp-tcp'){$user = $rdp[0].id}
     }
 }
 if ($user -match 'ATOL\\'){$user = $user -replace 'ATOL\\',''}
