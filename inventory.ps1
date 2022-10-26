@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.2'
+ver='3.0.3'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -57,7 +57,11 @@ $cpu.name.Count
 if ($cpu.name.Count -gt 1){$rcpu = $cpu.name[0]} else {$rcpu = $cpu.name}
 $rcpu
 $disk = Get-PhysicalDisk
-$disk=$disk.MediaType+' '+$disk.FriendlyName+' '+[math]::Round([long]$disk.size/([math]::Pow(1024,3)),0)+'Gb'
+foreach ($item in $disk){
+    $tdisk = $item.MediaType+' '+$item.FriendlyName+' '+[math]::Round([long]$item.size/([math]::Pow(1024,3)),0)+'Gb'+ '; '+$tdisk
+}
+$disk = $tdisk
+$disk
 $allnet = get-netadapter
 ForEach ($item in $allnet){
     if (($null -eq ($badadapters | ? { $item.InterfaceDescription -match $_ })) -and ($item.MacAddress -ne '') -and ($item.InterfaceDescription -ne $null)){
