@@ -16,6 +16,7 @@ $hostsoft=''
 $allobj=''
 $invnumber='n\\a'
 $jirasmsoft=''
+$tdisk=''
 Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 
