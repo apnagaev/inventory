@@ -18,6 +18,7 @@ $invnumber='n\\a'
 $jirasmsoft=''
 $tdisk=''
 Get-Command '*json'
+[Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 
 
