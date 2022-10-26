@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.3'
+ver='3.0.4'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
