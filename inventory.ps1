@@ -162,6 +162,7 @@ $updateurl=$updateurl+$deviceid
 
 #$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
 $userkeykey=$userkey.key
+if ($userkeykey.count -gt 1){$userkeykey=$userkey.key[1]}
 
 $object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 ForEach ($item in $object.attributes){
