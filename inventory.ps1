@@ -11,12 +11,14 @@ cls
 $sleep = Get-Random -Maximum 900
 start-sleep $sleep
 $badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
+$virtvendor=@('VMware','Microsoft')
 $mac=''
 $hostsoft=''
 $allobj=''
 $invnumber='n\\a'
 $jirasmsoft=''
 $tdisk=''
+$compatt=''
 Get-Command '*json'
 [Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -39,6 +41,10 @@ $manuname.NumberOfLogicalProcessors
 $motherboard = Get-CimInstance -Class Win32_BaseBoard #| Format-Table Manufacturer, Product, SerialNumber, Version -Auto
 $motherboard = $motherboard.Manufacturer+' P\\N:'+$motherboard.Product+' S\\N:'+$motherboard.SerialNumber+' Ver:'+$motherboard.Version
 
+$compfqdn=[System.Net.Dns]::GetHostByName($env:computerName)
+$compfqdn.HostName
+
+
 if ($manuname.PCSystemType -eq '') {$PCSystemType = ''}
 if ($manuname.PCSystemType -eq '6') {$PCSystemType = 'Appliance PC'}
 if ($manuname.PCSystemType -eq '1') {$PCSystemType = 'Desktop'}
@@ -52,7 +58,7 @@ if ($manuname.PCSystemType -eq '3') {$PCSystemType = 'Workstation'}
 $memory=[math]::Round([long]$manuname.TotalPhysicalMemory/([math]::Pow(1024,3)),0)
 $PCSystemType
 try{
-$winver='Windows '+[System.Environment]::OSVersion.Version.Major+' '+(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name DisplayVersion).DisplayVersion+' Build '+[System.Environment]::OSVersion.Version.Build
+    $winver=(Get-WmiObject -class Win32_OperatingSystem).Caption+' '+(Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").DisplayVersion+' Build '+[System.Environment]::OSVersion.Version.Build
 }
 catch {$winver=(Get-WmiObject -class Win32_OperatingSystem).Caption}
 $cpu = Get-WmiObject -Class Win32_Processor | select *
@@ -129,17 +135,17 @@ if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$ma
 $invnumber
 
 if ($objectTypeId -eq 42){
-$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562)
+$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562, 949)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
 if ($objectTypeId -eq 41){
-$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561)
+$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561, 950)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Computers"'
 }
 
 if ($objectTypeId -eq 52){
-$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494)
+$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494, 948, 607)
 $invnumber='N\\A'
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Servers"'
 }
@@ -192,6 +198,26 @@ ForEach ($item in $object.attributes){
 
 
 
+if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })) {
+    $compatt=$compatt+',
+    {"objectTypeAttributeId":'+$attributevar[16]+',
+      "objectAttributeValues": [
+        {
+          "value":"true"
+        }
+      ]}'
+}
+else{
+$compatt=$compatt+',
+    {"objectTypeAttributeId":'+$attributevar[16]+',
+      "objectAttributeValues": [
+        {
+          "value":"false"
+        }
+      ]}'
+}
+
+
 $body='{
   "objectSchemaKey":"'+$objectSchemaKey+'",
   "objectTypeId":'+$objectTypeId+',
@@ -211,7 +237,7 @@ $body='{
     {"objectTypeAttributeId":'+$attributevar[2]+',
       "objectAttributeValues": [
         {
-          "value":"'+$compinfo.Name+'"
+          "value":"'+$compfqdn.HostName+'"
         }
       ]},
     {"objectTypeAttributeId":'+$attributevar[3]+',
@@ -285,7 +311,7 @@ $body='{
         {
           "value":"'+$PCSystemType+' '+$localip.IPAddress+'"
         }
-      ]}
+      ]}'+$compatt+'
   ]
 }'
 
@@ -395,4 +421,3 @@ $body='{
 }'
 #$body
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
-
