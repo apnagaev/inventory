@@ -19,6 +19,7 @@ $jirasmsoft=''
 $tdisk=''
 Get-Command '*json'
 [Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 
 
