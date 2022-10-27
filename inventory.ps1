@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.5'
+ver='3.0.6'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -110,9 +110,19 @@ if ($user -notmatch '@atol.ru'){$user = $user + '@atol.ru'}
 #$user = $user -replace '\.',''
 
 $userurl=$userurl+$user
-$userkey
+#$userkey
 $userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=('Basic {0}' -f $base64)}
 
+$userkeykey=''
+if ($userkeykey.count -gt 1){
+$user
+    #$userkeykey=$userkey.key[1]
+    foreach ($item in $userkey){
+    $item.emailAddress
+        if ($item.emailAddress -eq $user){$userkeykey=$item.key}
+    }
+}
+else{$userkeykey=$userkey.key}
 
 $compinfo.Name
 if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}}
@@ -163,8 +173,8 @@ $updateurl=$updateurl+$deviceid
 #$body='{"objectSchemaKey":"$objectSchemaKey", "objectTypeId": $objectTypeId,"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "$compinfo.Name"}]}]}'
 
 #$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
-$userkeykey=$userkey.key
-if ($userkeykey.count -gt 1){$userkeykey=$userkey.key[1]}
+#$userkeykey=$userkey.key
+#if ($userkeykey.count -gt 1){$userkeykey=$userkey.key[1]}
 
 $object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 ForEach ($item in $object.attributes){
