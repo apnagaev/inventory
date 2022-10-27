@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.6'
+ver='3.0.7'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -19,11 +19,13 @@ $invnumber='n\\a'
 $jirasmsoft=''
 $tdisk=''
 $compatt=''
+$upt=''
 Get-Command '*json'
 [Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
-
+$uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime 
+$upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
 
 
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
@@ -135,17 +137,17 @@ if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$ma
 $invnumber
 
 if ($objectTypeId -eq 42){
-$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562, 949)
+$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562, 949, 961)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
 if ($objectTypeId -eq 41){
-$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561, 950)
+$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561, 950, 962)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Computers"'
 }
 
 if ($objectTypeId -eq 52){
-$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494, 948, 607)
+$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494, 948, 607, 963)
 $invnumber='N\\A'
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Servers"'
 }
@@ -216,6 +218,15 @@ $compatt=$compatt+',
         }
       ]}'
 }
+$compatt=$compatt+',
+    {"objectTypeAttributeId":'+$attributevar[17]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$upt+'"
+        }
+      ]}'
+
+
 
 
 $body='{
