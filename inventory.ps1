@@ -11,7 +11,7 @@ ver='3.1'
 #########################
 cls
 #$sleep = Get-Random -Maximum 900
-start-sleep $sleep
+#start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
@@ -23,7 +23,6 @@ $tdisk=''
 $compatt=''
 $upt=''
 Get-Command '*json'
-[Console]::OutputEncoding = [System.Text.Encoding]::GetEncoding("utf-8")
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 $uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime 
@@ -180,7 +179,7 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
-Start-Sleep 60
+#Start-Sleep 60
 
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
@@ -418,7 +417,7 @@ $body='{
             }'
     Write-Host('Create object')
     $body
-    #Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
     }
 }
 
