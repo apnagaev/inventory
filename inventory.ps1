@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000)
 ####################################
-ver='3.0.10'
+ver='3.0.11'
 #########################
 cls
 #$sleep = Get-Random -Maximum 900
@@ -178,6 +178,18 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
+Start-Sleep 60
+
+$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
+
+##########find device id#############
+ForEach ($item in $allobj.objectEntries){
+    if ($compinfo.Name -eq $item.name){
+    $item.name
+    $item.id
+    $deviceid=$item.id
+    }
+}
 
 
 
