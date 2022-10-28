@@ -132,13 +132,13 @@ $invnumber
 
 if (($manuname.PCSystemType -eq 1) -or ($manuname.PCSystemType -eq 3)){#Workstation
 $objectTypeId=65
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155, 1165)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
 }
 
 if ($manuname.PCSystemType -eq 2){#Laptop
 $objectTypeId=66
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155, 1165)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
@@ -153,7 +153,7 @@ if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($comp
         $objectTypeId=103
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
     }
-$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1156)
+$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1156, 1166)
 $invnumber='na'
 }
 
@@ -243,7 +243,13 @@ $compatt=$compatt+',
           "value":"'+$upt+'"
         }
       ]}'
-
+$compatt=$compatt+',
+    {"objectTypeAttributeId":'+$attributevar[18]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$localip.IPAddress+'"
+        }
+      ]}'
 
 
 
