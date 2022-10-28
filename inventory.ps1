@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000)
 ####################################
-ver='3.1'
+ver='3.2'
 #########################
 cls
 #$sleep = Get-Random -Maximum 900
@@ -31,7 +31,7 @@ $upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
 $network = Get-NetConnectionProfile
 $network | ConvertTo-Json
 $network.InterfaceAlias
-$localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
+$localip = (Get-NetAdapter -Name $network.InterfaceAlias | Get-NetIPAddress).IPv4Address  
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
 $manuname | ConvertTo-Json
 $manuname.Manufacturer
