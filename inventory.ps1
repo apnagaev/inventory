@@ -141,7 +141,7 @@ $attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981,
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
-if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3)){
+if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($compinfo.Name.ToLower() -match 'srv')){
     if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })){
         #baremetal
         $objectTypeId=102
