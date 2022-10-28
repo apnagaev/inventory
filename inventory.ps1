@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.9'
+ver='3.0.10'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -119,7 +119,7 @@ if ($user -notmatch '@atol.ru'){$user = $user + '@atol.ru'}
 
 $userurl=$userurl+$user
 #$userkey
-$userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=('Basic {0}' -f $base64)}
+$userkey=Invoke-RestMethod -Uri $userurl -Headers @{Authorization=('Basic {0}' -f $base64)} -ContentType 'application/json; charset=utf-8'
 
 $userkeykey=''
 if ($userkeykey.count -gt 1){
@@ -153,7 +153,7 @@ $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Servers"'
 }
 
 $allurlpc
-$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)}
+$allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
 ##########find device id#############
 ForEach ($item in $allobj.objectEntries){
@@ -170,7 +170,7 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     $body
     Write-Host ('create new object')
-    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
 
@@ -180,11 +180,11 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
 $updateurl=$updateurl+$deviceid
 #$body='{"objectSchemaKey":"$objectSchemaKey", "objectTypeId": $objectTypeId,"attributes": [{"objectTypeAttributeId": 342,"objectAttributeValues": [{"value": "$compinfo.Name"}]}]}'
 
-#$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
+#$nowuser = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 #$userkeykey=$userkey.key
 #if ($userkeykey.count -gt 1){$userkeykey=$userkey.key[1]}
 
-$object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json' -Verbose
+$object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 ForEach ($item in $object.attributes){
     if ($item.objectTypeAttributeId -eq 409){
     if ($user -eq $null){$user=$item.objectAttributeValues.value}
@@ -328,7 +328,7 @@ $body='{
 
 $body=$body -replace '\\',''
 
-Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $updateurl
 $body
 $i=0
@@ -353,7 +353,7 @@ $soft
 $i=0
 $allsofturl=$allurl+'&qlQuery=objectType="Software"'
 $allsofturl
-$alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)}
+$alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 $alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
     #$jsmitem.name
@@ -404,7 +404,7 @@ $body='{
 	            ]
             }'
     Write-Host('Create object')
-    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json' -Verbose
+    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
     }
 }
 
@@ -431,4 +431,4 @@ $body='{
 	}]
 }'
 #$body
-Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json' -Verbose
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
