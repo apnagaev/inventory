@@ -3,14 +3,16 @@ $createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
 $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
 $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=999999'
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
-$objectSchemaKey='SCHINV'
+$objectSchemaKey='AS'
+$objsoft=112
+$softaatr=@(991, 1000)
 ####################################
-ver='3.0.11'
+ver='3.0.10'
 #########################
 cls
-$sleep = Get-Random -Maximum 900
-start-sleep $sleep
-$badadapters=@('TAP-Windows','Cisco AnyConnect','Bluetooth','Fibocom')
+#$sleep = Get-Random -Maximum 900
+#start-sleep $sleep
+$badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
 $hostsoft=''
@@ -82,16 +84,6 @@ ForEach ($item in $allnet){
 
 
 
-if ($manuname.PCSystemType -eq 1){$objectTypeId=41}
-if ($manuname.PCSystemType -eq 2){$objectTypeId=42}
-if ($manuname.PCSystemType -eq 3){$objectTypeId=41}
-if ($manuname.PCSystemType -eq 4){$objectTypeId=52}
-if ($manuname.PCSystemType -eq 5){$objectTypeId=52}
-if ($manuname.PCSystemType -eq 6){$objectTypeId=52}
-if ($manuname.PCSystemType -eq 7){$objectTypeId=52}
-if ($manuname.PCSystemType -eq 8){$objectTypeId=52}
-if ($manuname.PCSystemType -eq 0){$objectTypeId=52}
-
 if ($compinfo.Name.ToLower() -match 'srv') {$objectTypeId=52}
 
 $computer='localhost'
@@ -136,21 +128,34 @@ $compinfo.Name
 if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}}
 $invnumber
 
-if ($objectTypeId -eq 42){
-$attributevar=@(342, 386, 395, 410, 408, 411, 397, 414, 406, 412, 458, 385, 409, 413, 460, 562, 949, 961)
+
+if (($manuname.PCSystemType -eq 1) -or ($manuname.PCSystemType -eq 3)){#Workstation
+$objectTypeId=65
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155)
+$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
+}
+
+if ($manuname.PCSystemType -eq 2){#Laptop
+$objectTypeId=66
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
-if ($objectTypeId -eq 41){
-$attributevar=@(338, 353, 396, 415, 416, 419, 417, 422, 418, 420, 437, 355, 423, 421, 439, 561, 950, 962)
-$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Computers"'
+if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3)){
+    if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })){
+        #baremetal
+        $objectTypeId=102
+        $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="BareMetal"'
+    }
+    else{
+        #virtual
+        $objectTypeId=103
+        $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
+    }
+$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1156)
+$invnumber='na'
 }
 
-if ($objectTypeId -eq 52){
-$attributevar=@(463, 481, 482, 483, 484, 487, 485, 491, 486, 488, 490, 478, 480, 489, 494, 948, 607, 963)
-$invnumber='N\\A'
-$allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Servers"'
-}
 
 $allurlpc
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
@@ -186,12 +191,12 @@ $updateurl=$updateurl+$deviceid
 
 $object = Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Get' -ContentType 'application/json; charset=utf-8' -Verbose
 ForEach ($item in $object.attributes){
-    if ($item.objectTypeAttributeId -eq 409){
+    if ($item.objectTypeAttributeId -eq $attributevar[12]){
     if ($user -eq $null){$user=$item.objectAttributeValues.value}
     }
 }
 ForEach ($item in $object.attributes){
-    if ($item.objectTypeAttributeId -eq 385){
+    if ($item.objectTypeAttributeId -eq $attributevar[11]){
     $item.objectAttributeValues.searchValue
     #$user=$item.objectAttributeValues.value
     if ($item.objectAttributeValues.searchValue -ne $null){$userkeykey=$item.objectAttributeValues.searchValue}
@@ -334,22 +339,14 @@ $body
 $i=0
 $c=0
 
-$soft = Get-CimInstance -Class Win32_Product
-#$soft = $soft | select -uniq
-#$soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
+$soft = New-Object System.Collections.ArrayList
+$soft = Get-CimInstance -Class Win32_Product | Select-Object -Property Name, Version
+$soft=$soft | ConvertTo-Csv
+$soft = $soft | select -uniq
+$soft = $soft | ConvertFrom-Csv -Delimiter ','
 $soft
 
 
-#foreach ($item1 in $soft){
-#$item1.name = $item1.name -replace '\+',''
-#$item1.name = $item1.name -replace '\)','|'
-#$item1.name = $item1.name -replace '\(','|'
-
-#    foreach ($item2 in $alleqsoft){
-        
-    
-#    }
-#}
 $i=0
 $allsofturl=$allurl+'&qlQuery=objectType="Software"'
 $allsofturl
@@ -358,7 +355,7 @@ $alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
     #$jsmitem.name
     #$jsmitem.attributes.objectAttributeValues.value[1]
-    $jirasmsoft=$jirasmsoft+$jsmitem.name+','+$jsmitem.attributes.objectAttributeValues.value[1]+','+$jsmitem.objectKey+"`n"
+    $jirasmsoft=$jirasmsoft+$jsmitem.name+','+$jsmitem.attributes.objectAttributeValues.value[2]+','+$jsmitem.objectKey+"`n"
 }
 
 $jirasmsoft = $jirasmsoft | ConvertFrom-Csv -Delimiter ',' -Header 'name','version','objkey'
@@ -371,6 +368,8 @@ $i=0
 $softnv=$softitem.name+','+$softitem.version
     foreach ($jsmitem in $jirasmsoft){
         $jsmnv=$jsmitem.name+','+$jsmitem.version
+            #$softnv
+            $jsmnv
             if($softnv -eq $jsmnv){
             #$softnv
             Write-Host('dont create, exit')
@@ -378,7 +377,7 @@ $softnv=$softitem.name+','+$softitem.version
             $i    
             $jsmitem.objkey
             $hostsoft=$jsmitem.objkey+';'+$hostsoft           
-            break  
+            break
             }
     }
 
@@ -388,15 +387,15 @@ if ($i -eq 0){
 #$softnv
 $body='{
 	            "objectSchemaKey": "'+$objectSchemaKey+'",
-	            "objectTypeId": 53,
+	            "objectTypeId": '+$objsoft+',
 	            "attributes": [{
-			        "objectTypeAttributeId": 467,
+			        "objectTypeAttributeId": '+$softaatr[0]+',
 			            "objectAttributeValues": [{
 				            "value": "'+$softitem.name+'"
 			            }]
 		            },
 		            {
-			            "objectTypeAttributeId": 558,
+			            "objectTypeAttributeId": '+$softaatr[1]+',
 			            "objectAttributeValues": [{
 				            "value": "'+$softitem.version+'"
 			            }]
@@ -404,6 +403,7 @@ $body='{
 	            ]
             }'
     Write-Host('Create object')
+    $body
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
     }
 }
@@ -430,5 +430,5 @@ $body='{
 		]
 	}]
 }'
-#$body
+$body
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
