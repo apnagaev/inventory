@@ -31,7 +31,10 @@ $upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
 $network = Get-NetConnectionProfile
 $network | ConvertTo-Json
 $network.InterfaceAlias
-$localip = (Get-NetAdapter -Name $network.InterfaceAlias | Get-NetIPAddress).IPv4Address  
+$localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
+$localip = $localip.IPv4Address
+$localip
+
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
 $manuname | ConvertTo-Json
 $manuname.Manufacturer
@@ -247,7 +250,7 @@ $compatt=$compatt+',
     {"objectTypeAttributeId":'+$attributevar[18]+',
       "objectAttributeValues": [
         {
-          "value":"'+$localip.IPAddress+'"
+          "value":"'+$localip+'"
         }
       ]}'
 
