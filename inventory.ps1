@@ -10,7 +10,7 @@ $softaatr=@(991, 1000)
 ver='3.2'
 #########################
 cls
-#$sleep = Get-Random -Maximum 900
+$sleep = Get-Random -Maximum 900
 start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
