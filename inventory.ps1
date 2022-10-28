@@ -5,7 +5,7 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='SCHINV'
 ####################################
-ver='3.0.10'
+ver='3.0.11'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -334,9 +334,9 @@ $body
 $i=0
 $c=0
 
-$soft = wmic product get name,version /format:csv
-$soft = $soft | select -uniq
-$soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
+$soft = Get-CimInstance -Class Win32_Product
+#$soft = $soft | select -uniq
+#$soft = $soft | ConvertFrom-Csv -Delimiter ',' #-Header 'name','version'
 $soft
 
 
