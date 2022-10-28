@@ -11,7 +11,7 @@ ver='3.0.11'
 #########################
 cls
 #$sleep = Get-Random -Maximum 900
-#start-sleep $sleep
+start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
