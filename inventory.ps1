@@ -28,7 +28,7 @@ Get-Command '*json'
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 $uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime 
 $upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
-'
+
 
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
