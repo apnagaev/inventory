@@ -5,9 +5,9 @@ $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=9999
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
 $objectSchemaKey='AS'
 $objsoft=112
-$softaatr=@(991, 1000)
+$softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.3'
+ver='3.3.1'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -423,6 +423,12 @@ $body='{
 			            "objectTypeAttributeId": '+$softaatr[1]+',
 			            "objectAttributeValues": [{
 				            "value": "'+$softitem.version+'"
+			            }]
+		            },
+		            {
+			            "objectTypeAttributeId": '+$softaatr[2]+',
+			            "objectAttributeValues": [{
+				            "value": "'+$compfqdn.HostName+'"
 			            }]
 		            }
 	            ]
