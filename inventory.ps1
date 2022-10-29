@@ -177,8 +177,9 @@ ForEach ($item in $allobj.objectEntries){
 ##########check object and create if null#############
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
-    $body
+    $body = [System.Text.Encoding]::UTF8.GetBytes($body)
     Write-Host ('create new object')
+    $body = [System.Text.Encoding]::UTF8.GetBytes($body)
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
@@ -354,7 +355,7 @@ $body='{
 }'
 
 $body=$body -replace '\\',''
-
+$body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $updateurl
 $body
@@ -372,6 +373,7 @@ $soft
 $i=0
 $allsofturl=$allurl+'&qlQuery=objectType="Software"'
 $allsofturl
+$body = [System.Text.Encoding]::UTF8.GetBytes($body)
 $alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 $alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
@@ -426,6 +428,7 @@ $body='{
             }'
     Write-Host('Create object')
     $body
+    $body = [System.Text.Encoding]::UTF8.GetBytes($body)
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
     }
 }
@@ -453,4 +456,5 @@ $body='{
 	}]
 }'
 $body
+$body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
