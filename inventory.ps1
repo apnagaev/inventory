@@ -378,9 +378,9 @@ $alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic 
 if ($alljsmsoft.iql -ne $null) {
 #$alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
-    #$jsmitem.name
+    #$jsmitem.name.Trim()
     #$jsmitem.attributes.objectAttributeValues.value[1]
-    $jirasmsoft=$jirasmsoft+$jsmitem.name+','+$jsmitem.attributes.objectAttributeValues.value[2]+','+$jsmitem.objectKey+"`n"
+    $jirasmsoft=$jirasmsoft+$jsmitem.name.Trim()+','+$jsmitem.attributes.objectAttributeValues.value[2]+','+$jsmitem.objectKey+"`n"
 }
 
 $jirasmsoft = $jirasmsoft | ConvertFrom-Csv -Delimiter ',' -Header 'name','version','objkey'
@@ -390,9 +390,9 @@ $jirasmsoft = $jirasmsoft | ConvertFrom-Csv -Delimiter ',' -Header 'name','versi
 
 foreach ($softitem in $soft){
 $i=0
-$softnv=$softitem.name+','+$softitem.version
+$softnv=$softitem.name.Trim()+','+$softitem.version
     foreach ($jsmitem in $jirasmsoft){
-        $jsmnv=$jsmitem.name+','+$jsmitem.version
+        $jsmnv=$jsmitem.name.Trim()+','+$jsmitem.version
             #$softnv
             #$jsmnv
             if($softnv -eq $jsmnv){
@@ -416,7 +416,7 @@ $body='{
 	            "attributes": [{
 			        "objectTypeAttributeId": '+$softaatr[0]+',
 			            "objectAttributeValues": [{
-				            "value": "'+$softitem.name+'"
+				            "value": "'+$softitem.name.Trim()+'"
 			            }]
 		            },
 		            {
