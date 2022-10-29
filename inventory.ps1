@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000)
 ####################################
-ver='3.2'
+ver='3.3'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -375,6 +375,7 @@ $allsofturl=$allurl+'&qlQuery=objectType="Software"'
 $allsofturl
 $body = [System.Text.Encoding]::UTF8.GetBytes($body)
 $alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
+if ($alljsmsoft.iql -ne $null) {
 #$alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
     #$jsmitem.name
@@ -458,3 +459,4 @@ $body='{
 $body
 $body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+}
