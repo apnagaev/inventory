@@ -7,11 +7,11 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.3.1'
+ver='3.3.2'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
-start-sleep $sleep
+#start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
@@ -26,7 +26,8 @@ Get-Command '*json'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $compinfo = Get-CimInstance -ClassName Win32_ComputerSystem
 $uptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime 
-$upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
+#$upt=[math]::Round($uptime.TotalHours,1) -replace ",","."
+$upt=((gcim Win32_OperatingSystem).LastBootUpTime).toString("yyyy-MM-ddTHH:mm:ssZ")
 
 $network = Get-NetConnectionProfile
 $network | ConvertTo-Json
@@ -136,13 +137,13 @@ $invnumber
 
 if (($manuname.PCSystemType -eq 1) -or ($manuname.PCSystemType -eq 3)){#Workstation
 $objectTypeId=65
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155, 1165)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
 }
 
 if ($manuname.PCSystemType -eq 2){#Laptop
 $objectTypeId=66
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1155, 1165)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
@@ -157,7 +158,7 @@ if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($comp
         $objectTypeId=103
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
     }
-$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1156, 1166)
+$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166)
 $invnumber='na'
 }
 
@@ -184,7 +185,7 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
-Start-Sleep 60
+#Start-Sleep 60
 
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
