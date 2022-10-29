@@ -11,7 +11,7 @@ ver='3.2'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
-start-sleep $sleep
+#start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
@@ -183,7 +183,7 @@ if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
-Start-Sleep 60
+#Start-Sleep 60
 
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
@@ -355,10 +355,10 @@ $body='{
 }'
 
 $body=$body -replace '\\',''
+$body
 $body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $updateurl
-$body
 $i=0
 $c=0
 
@@ -367,7 +367,7 @@ $soft = Get-CimInstance -Class Win32_Product | Select-Object -Property Name, Ver
 $soft=$soft | ConvertTo-Csv
 $soft = $soft | select -uniq
 $soft = $soft | ConvertFrom-Csv -Delimiter ','
-$soft
+#$soft
 
 
 $i=0
@@ -375,7 +375,7 @@ $allsofturl=$allurl+'&qlQuery=objectType="Software"'
 $allsofturl
 $body = [System.Text.Encoding]::UTF8.GetBytes($body)
 $alljsmsoft=Invoke-RestMethod -Uri $allsofturl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
-$alljsmsoft
+#$alljsmsoft
 foreach ($jsmitem in $alljsmsoft.objectEntries){
     #$jsmitem.name
     #$jsmitem.attributes.objectAttributeValues.value[1]
@@ -393,13 +393,13 @@ $softnv=$softitem.name+','+$softitem.version
     foreach ($jsmitem in $jirasmsoft){
         $jsmnv=$jsmitem.name+','+$jsmitem.version
             #$softnv
-            $jsmnv
+            #$jsmnv
             if($softnv -eq $jsmnv){
             #$softnv
             Write-Host('dont create, exit')
             $i=$i+1
-            $i    
-            $jsmitem.objkey
+            #$i    
+            #$jsmitem.objkey
             $hostsoft=$jsmitem.objkey+';'+$hostsoft           
             break
             }
