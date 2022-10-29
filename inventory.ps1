@@ -137,13 +137,13 @@ $invnumber
 
 if (($manuname.PCSystemType -eq 1) -or ($manuname.PCSystemType -eq 3)){#Workstation
 $objectTypeId=65
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1182)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
 }
 
 if ($manuname.PCSystemType -eq 2){#Laptop
 $objectTypeId=66
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1183)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
@@ -158,7 +158,7 @@ if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($comp
         $objectTypeId=103
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
     }
-$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166)
+$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166, 1182)
 $invnumber='na'
 }
 
@@ -172,6 +172,7 @@ ForEach ($item in $allobj.objectEntries){
     $item.name
     $item.id
     $deviceid=$item.id
+    $compobg=$item.objectKey
     }
 }
 
@@ -221,6 +222,62 @@ ForEach ($item in $object.attributes){
     if ($item.objectAttributeValues.searchValue -ne $null){$userkeykey=$item.objectAttributeValues.searchValue}
     }
 }
+
+
+
+
+$allosurl=$allurl+'&qlQuery=objectType="OS"'
+$allosurl
+$allos=Invoke-RestMethod -Uri $allosurl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
+if ($allos.iql -ne $null) {
+    #$alljsmsoft
+        foreach ($ositem in $allos.objectEntries){
+            $ositem.name
+            if ($allos.objectEntries.name -notcontains (Get-WmiObject -class Win32_OperatingSystem).Caption){
+                                    $body='{
+	                                "objectSchemaKey": "'+$objectSchemaKey+'",
+	                                "objectTypeId": 355,
+	                                "attributes": [{
+			                            "objectTypeAttributeId":991,
+			                                "objectAttributeValues": [{
+				                                "value": "'+(Get-WmiObject -class Win32_OperatingSystem).Caption+'"
+			                                }]
+		                                }
+	                                ]
+                                }'
+                        Write-Host('Create object')
+                        $body
+                        #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
+                        Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+    
+        }
+        else{
+            if ($ositem.name -eq (Get-WmiObject -class Win32_OperatingSystem).Caption){
+            $ositem.obgkey
+                $body='{
+	            "objectSchemaKey": "'+$objectSchemaKey+'",
+	            "attributes": [{
+		            "objectTypeAttributeId":'+$attributevar[19]+',
+		            "objectAttributeValues": [{
+				"value":"'+$ositem.objectKey+'"
+			            }
+		            ]
+	            }]
+            }'
+            $body
+            #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
+            Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+
+        
+            }
+        }
+
+    }
+}
+
+
+
+
 
 
 
