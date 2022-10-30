@@ -143,7 +143,7 @@ $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
 
 if ($manuname.PCSystemType -eq 2){#Laptop
 $objectTypeId=66
-$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1183)
+$attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1182)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
@@ -158,7 +158,7 @@ if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($comp
         $objectTypeId=103
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
     }
-$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166, 1182)
+$attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166, 1183)
 $invnumber='na'
 }
 
