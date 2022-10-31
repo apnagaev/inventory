@@ -33,7 +33,7 @@ $network = Get-NetConnectionProfile
 $network | ConvertTo-Json
 $network.InterfaceAlias
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
-$localip = $localip.IPAddress
+$localip = $localip.IPv4Address
 $localip
 
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
@@ -640,8 +640,6 @@ $monsn -ne '0'
 $checkmon -eq 1
 
 $progress++
-}
-
 
 
 
@@ -665,6 +663,11 @@ $body
  Invoke-RestMethod -Uri $updatemonurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 
     }
+
+
+
+
+}
 
 
 
