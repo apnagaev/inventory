@@ -636,3 +636,31 @@ $checkmon -eq 1
 $progress++
 }
 
+
+
+
+##########update device id#############
+$updatemonurl=$updateurlclear+$monid
+
+if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
+        $body='{
+  "objectSchemaKey":"'+$objectSchemaKey+'",
+  "objectTypeId":74,
+  "attributes": [
+    {"objectTypeAttributeId":1261,
+      "objectAttributeValues": [
+        {
+          "value":"'+$compobg+'"
+        }
+      ]}
+  ]
+}'
+$body
+ Invoke-RestMethod -Uri $updatemonurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+
+    }
+
+
+
+
+
