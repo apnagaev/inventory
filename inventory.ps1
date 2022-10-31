@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.4.6'
+ver='3.4.7'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -647,6 +647,17 @@ $progress++
 
 
 ##########update device id#############
+if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
+
+        ##########find device id#############
+        ForEach ($item in $allmon.objectEntries){
+            if ($monobj -eq $item.name){
+            $item.name
+            $item.id
+            $monid=$item.id
+
+            }
+        }
 $updatemonurl=$updateurlclear+$monid
 
 if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
