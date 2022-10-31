@@ -532,3 +532,91 @@ $body
 #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
+
+
+
+
+$allurlmon=$allurl+'&includeAttributes=false&qlQuery=objectType="Monitors"'
+$allmon=Invoke-RestMethod -Uri $allurlmon -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
+$progress = 1
+foreach ($monitor in (Get-WmiObject WmiMonitorID -Namespace root/wmi)) {
+#Write-Host "Monitor #$($progress):" -ForegroundColor Green
+#Write-Host "Manufactur: $(($monitor.ManufacturerName | ForEach-Object {[char]$_}) -join '')"
+$monmanufact=$(($monitor.ManufacturerName | ForEach-Object {[char]$_}) -join '')
+#Write-Host "PN: " ($($monitor.UserFriendlyName | ForEach-Object {[char]$_}) -join '')
+$monpn=($($monitor.UserFriendlyName | ForEach-Object {[char]$_}) -join '')
+#Write-Host "SN: " ($($monitor.SerialNumberID | ForEach-Object {[char]$_}) -join '')
+$monsn=($($monitor.SerialNumberID | ForEach-Object {[char]$_}) -join '')
+#Write-Host "WeekOfManufacture: $($monitor.WeekOfManufacture)"
+#Write-Host "YearOfManufacture: $($monitor.YearOfManufacture)"
+
+$monobj=$monmanufact+' '+$monpn+' '+$monsn
+$monmanufact
+$monpn
+$monsn
+$monobj
+
+
+
+
+
+$checkmon=0
+                                if ($localip.StartsWith('10.77.')){$checkmon=1}
+                                if ($localip.StartsWith('10.99.')){$checkmon=1}
+                                if ($localip.StartsWith('10.97.')){$checkmon=1}
+                                if ($localip.StartsWith('10.197.')){$checkmon=1}
+                                if ($localip.StartsWith('10.150.')){$checkmon=1}
+                                if ($localip.StartsWith('10.63.')){$checkmon=1}
+                                if ($localip.StartsWith('192.168.144')){$checkmon=1}
+                                if ($localip.StartsWith('10.177.')){$checkmon=1}
+
+
+
+
+$localip
+    if (($allmon.objectEntries.name -notcontains $monobj) -and ($monpn -ne '') -and ($monsn -ne '0') -and ($checkmon -eq 1)){
+        $body='{
+  "objectSchemaKey":"'+$objectSchemaKey+'",
+  "objectTypeId":74,
+  "attributes": [
+    {"objectTypeAttributeId":564,
+      "objectAttributeValues": [
+        {
+          "value":"'+$monobj+'"
+        }
+      ]},
+    {"objectTypeAttributeId":583,
+      "objectAttributeValues": [
+        {
+          "value":"'+$monmanufact+'"
+        }
+      ]},
+    {"objectTypeAttributeId":584,
+      "objectAttributeValues": [
+        {
+          "value":"'+$monpn+'"
+        }
+      ]},
+    {"objectTypeAttributeId":585,
+      "objectAttributeValues": [
+        {
+          "value":"'+$monsn+'"
+        }
+      ]}
+  ]
+}'
+$body
+Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+
+
+    }
+
+
+$allmon.objectEntries.name -notcontains $monobj
+$monpn -ne ''
+$monsn -ne '0'
+$checkmon -eq 1
+
+$progress++
+}
+
