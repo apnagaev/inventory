@@ -564,6 +564,7 @@ if ($monmanufact -eq 'PHL'){$monmanufact='Philips'}
 if ($monmanufact -eq 'BK'){$monmanufact='LG'}
 if ($monmanufact -eq 'VSC'){$monmanufact='ViewSonic'}
 if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
+if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 
 $checkmon=0
                                 if ($localip.StartsWith('10.77.')){$checkmon=1}
