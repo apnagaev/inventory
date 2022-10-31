@@ -230,6 +230,7 @@ $osname=(Get-WmiObject -class Win32_OperatingSystem).Caption
 $osname = $osname -replace 'Майкрософт','Microsoft'
 $osname = $osname -replace 'Профессиональная','Pro'
 $osname = $osname -replace 'Корпоративная','Corp'
+$osname = $osname -replace ' (Registered Trademark)',''
 $allosurl=$allurl+'&qlQuery=objectType="OS"'
 $allosurl
 $allos=Invoke-RestMethod -Uri $allosurl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
