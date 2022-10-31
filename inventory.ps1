@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.4.5'
+ver='3.4.6'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -623,7 +623,7 @@ $localip
     {"objectTypeAttributeId":1100,
       "objectAttributeValues": [
         {
-          "value":"True"
+          "value":"true"
         }
       ]}
   ]
