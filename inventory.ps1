@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.3.3'
+ver='3.3.4'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -181,6 +181,7 @@ ForEach ($item in $allobj.objectEntries){
 if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
     #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
+    
     Write-Host ('create new object')
     #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
@@ -420,6 +421,7 @@ $body='{
 
 $body=$body -replace '\\',''
 $body
+if ($PSVersionTable.PSVersion.Major -lt 5){$body = [System.Text.Encoding]::UTF8.GetBytes($body)}
 #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
 Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 $updateurl
