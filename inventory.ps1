@@ -601,13 +601,14 @@ $localip
       "objectAttributeValues": [
         {
           "value":"'+$monsn+'"
-        }
-      ]},
+          }
+        ]},
     {"objectTypeAttributeId":'+$attributevar[11]+',
       "objectAttributeValues": [
         {
           "value":"'+$userkeykey+'"
         }
+      ]}
   ]
 }'
 $body
