@@ -535,7 +535,18 @@ Invoke-RestMethod -Uri $updateurl -Headers @{Authorization=("Basic {0}" -f $base
 
 
 
+$checkmon=0
+if ($localip.StartsWith('10.77.')){$checkmon=1}
+if ($localip.StartsWith('10.99.')){$checkmon=1}
+if ($localip.StartsWith('10.97.')){$checkmon=1}
+if ($localip.StartsWith('10.197.')){$checkmon=1}
+if ($localip.StartsWith('10.150.')){$checkmon=1}
+if ($localip.StartsWith('10.63.')){$checkmon=1}
+if ($localip.StartsWith('192.168.144')){$checkmon=1}
+if ($localip.StartsWith('10.177.')){$checkmon=1}
 
+
+if ($checkmon -eq 1){
 $allurlmon=$allurl+'&includeAttributes=false&qlQuery=objectType="Monitors"'
 $allmon=Invoke-RestMethod -Uri $allurlmon -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 $progress = 1
@@ -567,15 +578,6 @@ if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
 if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
 
-$checkmon=0
-                                if ($localip.StartsWith('10.77.')){$checkmon=1}
-                                if ($localip.StartsWith('10.99.')){$checkmon=1}
-                                if ($localip.StartsWith('10.97.')){$checkmon=1}
-                                if ($localip.StartsWith('10.197.')){$checkmon=1}
-                                if ($localip.StartsWith('10.150.')){$checkmon=1}
-                                if ($localip.StartsWith('10.63.')){$checkmon=1}
-                                if ($localip.StartsWith('192.168.144')){$checkmon=1}
-                                if ($localip.StartsWith('10.177.')){$checkmon=1}
 
 
 
@@ -670,7 +672,7 @@ $body
 
 
 }
-
+}
 
 
 
