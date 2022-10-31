@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.4.2'
+ver='3.4.3'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -550,13 +550,11 @@ $monsn=($($monitor.SerialNumberID | ForEach-Object {[char]$_}) -join '')
 #Write-Host "WeekOfManufacture: $($monitor.WeekOfManufacture)"
 #Write-Host "YearOfManufacture: $($monitor.YearOfManufacture)"
 
-$monobj=$monmanufact+' '+$monpn+' '+$monsn
 $monmanufact = $monmanufact -replace "\W",""
 $monpn = $monpn -replace "\W",""
 $monsn = $monsn -replace "\W",""
 $monobj
-
-
+$monobj=$monmanufact+' '+$monpn+' '+$monsn
 
 
 
