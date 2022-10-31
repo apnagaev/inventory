@@ -562,7 +562,7 @@ if ($monmanufact -eq 'IVM'){$monmanufact='ProLite'}
 if ($monmanufact -eq 'LEN'){$monmanufact='Lenovo'}
 if ($monmanufact -eq 'PHL'){$monmanufact='Philips'}
 if ($monmanufact -eq 'BK'){$monmanufact='LG'}
-
+if ($monmanufact -eq 'VSC'){$monmanufact='ViewSonic'}
 
 
 $checkmon=0
