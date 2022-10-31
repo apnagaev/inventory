@@ -554,7 +554,7 @@ $monmanufact = $monmanufact -replace "\W",""
 $monpn = $monpn -replace "\W",""
 $monsn = $monsn -replace "\W",""
 $monobj
-$monobj=$monmanufact+' '+$monpn+' '+$monsn
+$monobj=$monpn+' '+$monsn
 if ($monmanufact -eq 'ACI'){$monmanufact='ASUS'}
 if ($monmanufact -eq 'BNQ'){$monmanufact='BenQ'}
 if ($monmanufact -eq 'DEL'){$monmanufact='DELL'}
