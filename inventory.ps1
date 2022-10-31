@@ -131,7 +131,7 @@ else{$userkeykey=$userkey.key}
 if ($userkeykey.count -gt 1){$userkeykey=$userkeykey[0]}
 
 $compinfo.Name
-if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\d+"|%{$matches[0]}}
+if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\0d+"|%{$matches[0]}}
 $invnumber
 
 
