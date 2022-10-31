@@ -619,6 +619,12 @@ $localip
         {
           "value":"'+$compobg+'"
         }
+      ]},
+    {"objectTypeAttributeId":1100,
+      "objectAttributeValues": [
+        {
+          "value":"True"
+        }
       ]}
   ]
 }'
