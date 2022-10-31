@@ -33,7 +33,7 @@ $network = Get-NetConnectionProfile
 $network | ConvertTo-Json
 $network.InterfaceAlias
 $localip = Get-NetIPAddress -InterfaceAlias $network.InterfaceAlias
-$localip = $localip.IPv4Address
+$localip = $localip.IPAddress
 $localip
 
 $manuname = Get-CimInstance -ClassName Win32_ComputerSystem
