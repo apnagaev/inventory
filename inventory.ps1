@@ -7,7 +7,7 @@ $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.4.4'
+ver='3.4.5'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
@@ -555,6 +555,13 @@ $monpn = $monpn -replace "\W",""
 $monsn = $monsn -replace "\W",""
 $monobj
 $monobj=$monmanufact+' '+$monpn+' '+$monsn
+if ($monmanufact -eq 'ACI'){$monmanufact='ASUS'}
+if ($monmanufact -eq 'BNQ'){$monmanufact='BenQ'}
+if ($monmanufact -eq 'DEL'){$monmanufact='DELL'}
+if ($monmanufact -eq 'IVM'){$monmanufact='ProLite'}
+if ($monmanufact -eq 'LEN'){$monmanufact='Lenovo'}
+if ($monmanufact -eq 'PHL'){$monmanufact='Philips'}
+if ($monmanufact -eq 'BK'){$monmanufact='LG'}
 
 
 
