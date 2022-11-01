@@ -7,7 +7,7 @@ $updateurlclear=$jiraserver+'/rest/assets/1.0/object/'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.5.1'
+$ver='Loader:'+$ver+' Script:3.5.2'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
