@@ -1,4 +1,6 @@
 $base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
+$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
+$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
 #############################
 $createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
 $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
@@ -580,7 +582,16 @@ if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
 if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
 
+$locationurl=$updateurlclear+$compobg
+$locref=Invoke-RestMethod -Uri $locationurl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
+foreach ($locitem in $locref.attributes){
+    if  ($locitem.objectTypeAttribute.id -eq '594'){
+    $locitem.objectAttributeValues.Value
+    $locitem.objectAttributeValues.referencedObject.objectKey
+    $location=$locitem.objectAttributeValues.referencedObject.objectKey
+    }  
+}
 
 
 
@@ -631,12 +642,18 @@ $localip
         {
           "value":"true"
         }
+      ]},
+    {"objectTypeAttributeId":594,
+      "objectAttributeValues": [
+        {
+          "value":"'+$location+'"
+        }
       ]}
   ]
 }'
 $body
  Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
-
+ 
     }
 
 
@@ -663,6 +680,8 @@ if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
         }
 $updatemonurl=$updateurlclear+$monid
 
+
+
 if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
         $body='{
   "objectSchemaKey":"'+$objectSchemaKey+'",
@@ -672,6 +691,12 @@ if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
       "objectAttributeValues": [
         {
           "value":"'+$compobg+'"
+        }
+      ]},
+    {"objectTypeAttributeId":594,
+      "objectAttributeValues": [
+        {
+          "value":"'+$location+'"
         }
       ]}
   ]
@@ -688,6 +713,5 @@ $updatemonurl
 }
 }
 }
-
 
 
