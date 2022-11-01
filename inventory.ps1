@@ -1,6 +1,3 @@
-$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
-$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
-$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
 #############################
 $createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
 $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
