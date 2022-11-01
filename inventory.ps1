@@ -1,9 +1,10 @@
+$base64 = "YS5oZWxwZGVza0BhdG9sLnJ1OiVYbkg4ODYrbypRJnRvaDlrR3EzSFQ="
 #############################
 $createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
 $updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
-$updateurlclear='https://jirasm.atol.ru/rest/assets/1.0/object/'
 $allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=999999'
 $userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
+$updateurlclear='https://jirasm.atol.ru/rest/assets/1.0/object/'
 $objectSchemaKey='AS'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
@@ -53,6 +54,7 @@ $motherboard = $motherboard.Manufacturer+' P\\N:'+$motherboard.Product+' S\\N:'+
 
 $compfqdn=[System.Net.Dns]::GetHostByName($env:computerName)
 $compfqdn.HostName
+$compfqdn.HostName=$compfqdn.HostName.ToLower()
 
 
 if ($manuname.PCSystemType -eq '') {$PCSystemType = ''}
@@ -90,7 +92,7 @@ ForEach ($item in $allnet){
 
 
 
-if ($compinfo.Name.ToLower() -match 'srv') {$objectTypeId=52}
+if ($compfqdn.HostName -match 'srv') {$objectTypeId=52}
 
 $computer='localhost'
 $user = gwmi -Class win32_computersystem -ComputerName "localhost" | select -ExpandProperty username -ErrorAction Stop 
@@ -131,8 +133,8 @@ $user
 else{$userkeykey=$userkey.key}
 if ($userkeykey.count -gt 1){$userkeykey=$userkeykey[0]}
 
-$compinfo.Name
-if ($compinfo.Name -match "\d+$"){$invnumber = $compinfo.Name -match "\0d+"|%{$matches[0]}}
+$compfqdn.HostName
+if ($compfqdn.HostName -match "00\d+"){$invnumber = $compfqdn.HostName -match "00\d+" |%{$matches[0]}}
 $invnumber
 
 
@@ -148,7 +150,7 @@ $attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981,
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
 }
 
-if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($compinfo.Name.ToLower() -match 'srv')){
+if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($compfqdn.HostName -match 'srv')){
     if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })){
         #baremetal
         $objectTypeId=102
@@ -169,18 +171,18 @@ $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -
 
 ##########find device id#############
 ForEach ($item in $allobj.objectEntries){
-    if ($compinfo.Name -eq $item.name){
+    if ($compfqdn.HostName -eq $item.name){
     $item.name
     $item.id
     $deviceid=$item.id
     $compobg=$item.objectKey
     }
-}
+}#$compinfo.Name
 
 
 ##########check object and create if null#############
-if ($null -eq ($allobj.objectEntries.label | ? { $compinfo.Name.ToLower() -match $_ })) {
-    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compinfo.Name.ToLower()+'"}]}]}'
+if ($null -eq ($allobj.objectEntries.name | ? { $compfqdn.HostName -match $_ })) {
+    $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compfqdn.HostName+'"}]}]}'
     #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
     
     Write-Host ('create new object')
@@ -194,7 +196,7 @@ $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -
 
 ##########find device id#############
 ForEach ($item in $allobj.objectEntries){
-    if ($compinfo.Name -eq $item.name){
+    if ($compfqdn.HostName -eq $item.name){
     $item.name
     $item.id
     $deviceid=$item.id
@@ -330,7 +332,7 @@ $body='{
     {"objectTypeAttributeId":'+$attributevar[0]+',
       "objectAttributeValues": [
         {
-          "value":"'+$compinfo.Name.ToLower()+'"
+          "value":"'+$compfqdn.HostName+'"
         }
       ]},
     {"objectTypeAttributeId":'+$attributevar[1]+',
@@ -675,6 +677,7 @@ if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
   ]
 }'
 $body
+$updatemonurl
  Invoke-RestMethod -Uri $updatemonurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 
     }
