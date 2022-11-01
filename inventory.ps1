@@ -1,14 +1,13 @@
 #############################
-$createurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/create'
-$updateurl = 'https://jirasm.atol.ru/rest/assets/1.0/object/'
-$allurl = 'https://jirasm.atol.ru/rest/assets/1.0/aql/objects?resultPerPage=999999'
-$userurl='https://jirasm.atol.ru/rest/api/2/user/search?username='
-$updateurlclear='https://jirasm.atol.ru/rest/assets/1.0/object/'
-$objectSchemaKey='AS'
+$createurl = $jiraserver+'/rest/assets/1.0/object/create'
+$updateurl = $jiraserver+/rest/assets/1.0/object/'
+$allurl = $jiraserver+/rest/assets/1.0/aql/objects?resultPerPage=999999'
+$userurl=$jiraserver+/rest/api/2/user/search?username='
+$updateurlclear=$jiraserver+/rest/assets/1.0/object/'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-ver='3.4.7'
+ver='3.5'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
