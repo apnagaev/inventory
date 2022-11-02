@@ -65,6 +65,9 @@ if ($manuname.PCSystemType -eq '7') {$PCSystemType = 'Performance server'}
 if ($manuname.PCSystemType -eq '5') {$PCSystemType = 'SOHO Server'}
 if ($manuname.PCSystemType -eq '0') {$PCSystemType = 'unspecified'}
 if ($manuname.PCSystemType -eq '3') {$PCSystemType = 'Workstation'}
+
+
+
 $memory=[math]::Round([long]$manuname.TotalPhysicalMemory/([math]::Pow(1024,3)),0)
 $PCSystemType
 try{
@@ -580,6 +583,9 @@ if ($monmanufact -eq 'VSC'){$monmanufact='ViewSonic'}
 if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
 if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
+
+$monpn = $monpn -replace $monmanufact,''
+
 
 $locationurl=$updateurlclear+$compobg
 $locref=Invoke-RestMethod -Uri $locationurl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
