@@ -698,6 +698,12 @@ if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
         {
           "value":"'+$location+'"
         }
+      ]},
+    {"objectTypeAttributeId":584,
+      "objectAttributeValues": [
+        {
+          "value":"'+$monpn+'"
+        }
       ]}
   ]
 }'
