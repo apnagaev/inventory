@@ -567,8 +567,8 @@ $monsn=($($monitor.SerialNumberID | ForEach-Object {[char]$_}) -join '')
 $monmanufact = $monmanufact -replace "\W",""
 $monpn = $monpn -replace "\W",""
 $monsn = $monsn -replace "\W",""
-$monobj
-$monobj=$monpn+' '+$monsn
+$monpn = $monpn -replace $monmanufact,''
+
 if ($monmanufact -eq 'ACI'){$monmanufact='ASUS'}
 if ($monmanufact -eq 'BNQ'){$monmanufact='BenQ'}
 if ($monmanufact -eq 'DEL'){$monmanufact='DELL'}
@@ -582,7 +582,7 @@ if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
 
 $monpn = $monpn -replace $monmanufact,''
-
+$monobj=$monmanufact+' '+$monpn+' '+$monsn
 
 $locationurl=$updateurlclear+$compobg
 $locref=Invoke-RestMethod -Uri $locationurl -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
