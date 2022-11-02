@@ -563,6 +563,10 @@ $monsn=($($monitor.SerialNumberID | ForEach-Object {[char]$_}) -join '')
 
 $monmanufact = $monmanufact -replace "\W",""
 $monpn = $monpn -replace "\W",""
+if ($monpn -match $monmanufact){
+$monpn = $monpn -replace $monmanufact,''
+$monpn = $monmanufact+' '+$monpn
+}
 $monsn = $monsn -replace "\W",""
 $monobj
 $monobj=$monpn+' '+$monsn
