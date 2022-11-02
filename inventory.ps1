@@ -579,7 +579,8 @@ if ($monmanufact -eq 'BK'){$monmanufact='LG'}
 if ($monmanufact -eq 'VSC'){$monmanufact='ViewSonic'}
 if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
 if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
-if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
+if ($monmanufact -eq 'MEI'){$monmanufact='Panasonic'}
+
 
 $monpn = $monpn -replace $monmanufact,''
 $monobj=$monmanufact+' '+$monpn+' '+$monsn
