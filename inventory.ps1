@@ -580,6 +580,8 @@ if ($monmanufact -eq 'VSC'){$monmanufact='ViewSonic'}
 if ($monmanufact -eq 'ACR'){$monmanufact='Acer'}
 if ($monmanufact -eq 'GSM'){$monmanufact='LG'}
 if ($monmanufact -eq 'MEI'){$monmanufact='Panasonic'}
+if ($monmanufact -eq 'SAM'){$monmanufact='Samsung'}
+if ($monmanufact -eq 'HPN'){$monmanufact='HP'}
 
 
 $monpn = $monpn -replace $monmanufact,''
