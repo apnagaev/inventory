@@ -365,6 +365,12 @@ if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })) {
         {
           "value":"'+$motherboard+'"
         }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[18]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$localip+'"
+        }
       ]}'
 }
 else{
@@ -383,13 +389,7 @@ $compatt=$compatt+',
           "value":"'+$upt+'"
         }
       ]}'
-$compatt=$compatt+',
-    {"objectTypeAttributeId":'+$attributevar[18]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$localip+'"
-        }
-      ]}'
+#$compatt=$compatt+''
 
 
 
@@ -732,3 +732,4 @@ $updatemonurl
 }
 }
 }
+
