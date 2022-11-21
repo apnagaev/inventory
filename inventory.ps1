@@ -11,7 +11,7 @@ $ver='Loader:'+$ver+' Script:3.5.2'
 #########################
 cls
 $sleep = Get-Random -Maximum 900
-start-sleep $sleep
+#start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
@@ -143,12 +143,14 @@ if (($manuname.PCSystemType -eq 1) -or ($manuname.PCSystemType -eq 3)){#Workstat
 $objectTypeId=65
 $attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1182)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Workstations"'
+$bm=$true
 }
 
 if ($manuname.PCSystemType -eq 2){#Laptop
 $objectTypeId=66
 $attributevar=@(564, 581, 975, 583, 584, 977, 585, 980, 976, 978, 590, 579, 981, 979, 596, 1154, 1100, 1178, 1165, 1182)
 $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Laptops"'
+$bm=$true
 }
 
 if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($compfqdn.HostName -match 'srv')){
@@ -156,14 +158,24 @@ if (($manuname.PCSystemType -eq 0) -or ($manuname.PCSystemType -gt 3) -or ($comp
         #baremetal
         $objectTypeId=102
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="BareMetal"'
+        $bm=$true
     }
     else{
         #virtual
         $objectTypeId=103
         $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
+        $bm=$false
     }
 $attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166, 1183)
-$invnumber='na'
+$invnumber=''
+}
+
+if ($null -ne ($virtvendor | ? { $manuname.Manufacturer -match $_ })){
+    $objectTypeId=103
+    $allurlpc=$allurl+'&includeAttributes=false&qlQuery=objectType="Virtual"'
+    $attributevar=@(564, 581, 983, 583, 584, 986, 585, 989, 985, 987, 590, 579, 984, 988, 596, 1159, 1100, 1179, 1166, 1183)
+    $invnumber='na'
+    $bm=$false
 }
 
 
@@ -181,8 +193,9 @@ ForEach ($item in $allobj.objectEntries){
 }#$compinfo.Name
 
 
+
 ##########check object and create if null#############
-if ($null -eq ($allobj.objectEntries.name | ? { $compfqdn.HostName -match $_ })) {
+if (($null -eq ($allobj.objectEntries.name | ? { $compfqdn.HostName -match $_ })) -and ($bm))  {
     $body='{"objectSchemaKey":"'+$objectSchemaKey+'", "objectTypeId":'+$objectTypeId+',"attributes": [{"objectTypeAttributeId":'+$attributevar[0]+',"objectAttributeValues": [{"value": "'+$compfqdn.HostName+'"}]}]}'
     #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
     
@@ -191,7 +204,7 @@ if ($null -eq ($allobj.objectEntries.name | ? { $compfqdn.HostName -match $_ }))
     Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
-Start-Sleep 60
+#Start-Sleep 60
 
 $allobj=Invoke-RestMethod -Uri $allurlpc -Headers @{Authorization=("Basic {0}" -f $base64)} -ContentType 'application/json; charset=utf-8'
 
@@ -298,6 +311,60 @@ if ($null -eq ($virtvendor | ? { $manuname.Manufacturer -match $_ })) {
         {
           "value":"true"
         }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[3]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$manuname.Manufacturer+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[4]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$manuname.Model+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[5]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$memory+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[6]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$serial+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[8]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$rcpu+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[7]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$winver+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[9]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$disk+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[10]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$mac+'"
+        }
+      ]},
+    {"objectTypeAttributeId":'+$attributevar[13]+',
+      "objectAttributeValues": [
+        {
+          "value":"'+$motherboard+'"
+        }
       ]}'
 }
 else{
@@ -348,54 +415,6 @@ $body='{
           "value":"'+$compfqdn.HostName+'"
         }
       ]},
-    {"objectTypeAttributeId":'+$attributevar[3]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$manuname.Manufacturer+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[4]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$manuname.Model+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[5]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$memory+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[6]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$serial+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[7]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$winver+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[8]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$rcpu+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[9]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$disk+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[10]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$mac+'"
-        }
-      ]},
     {"objectTypeAttributeId":'+$attributevar[11]+',
       "objectAttributeValues": [
         {
@@ -406,18 +425,6 @@ $body='{
       "objectAttributeValues": [
         {
           "value":"'+$user+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[13]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$motherboard+'"
-        }
-      ]},
-    {"objectTypeAttributeId":'+$attributevar[14]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$PCSystemType+' '+$localip.IPAddress+'"
         }
       ]}'+$compatt+'
   ]
@@ -548,6 +555,7 @@ if ($localip -match ('10.97.\d+.\d+')){$checkmon=1}
 if ($localip -match ('10.99.\d+.\d+')){$checkmon=1}
 if ($localip -match ('10.77.\d+.\d+')){$checkmon=1}
 if ($localip -match ('10.150.\d+.\d+')){$checkmon=1}
+if (!$bm){$checkmon=0}
 
 if ($checkmon -eq 1){
 $allurlmon=$allurl+'&includeAttributes=false&qlQuery=objectType="Monitors"'
@@ -724,5 +732,3 @@ $updatemonurl
 }
 }
 }
-
-
