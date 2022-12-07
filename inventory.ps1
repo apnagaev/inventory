@@ -722,7 +722,7 @@ if (($allmon.objectEntries.name -contains $monobj) -and ($checkmon -eq 1)){
 }'
 $body
 $updatemonurl
- Invoke-RestMethod -Uri $updatemonurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+ #Invoke-RestMethod -Uri $updatemonurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Put' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 
     }
 
