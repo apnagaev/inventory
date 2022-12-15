@@ -415,12 +415,6 @@ $body='{
           "value":"'+$compfqdn.HostName+'"
         }
       ]},
-    {"objectTypeAttributeId":'+$attributevar[11]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$userkeykey+'"
-        }
-      ]},
     {"objectTypeAttributeId":'+$attributevar[12]+',
       "objectAttributeValues": [
         {
@@ -638,12 +632,6 @@ $localip
           "value":"'+$monsn+'"
           }
         ]},
-    {"objectTypeAttributeId":'+$attributevar[11]+',
-      "objectAttributeValues": [
-        {
-          "value":"'+$userkeykey+'"
-        }
-      ]},
     {"objectTypeAttributeId":1261,
       "objectAttributeValues": [
         {
