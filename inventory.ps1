@@ -201,7 +201,8 @@ if (($null -eq ($allobj.objectEntries.name | ? { $compfqdn.HostName -match $_ })
     
     Write-Host ('create new object')
     #$body = [System.Text.Encoding]::UTF8.GetBytes($body)
-    Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
+    #many dublicates now
+    #Invoke-RestMethod -Uri $createurl -Headers @{Authorization=("Basic {0}" -f $base64)} -Method 'Post' -Body $body -ContentType 'application/json; charset=utf-8' -Verbose
 }
 
 Start-Sleep 60
