@@ -7,10 +7,10 @@ $updateurlclear=$jiraserver+'/rest/assets/1.0/object/'
 $objsoft=112
 $softaatr=@(991, 1000, 1171)
 ####################################
-$ver='Loader:'+$ver+' Script:3.5.2'
+$ver='Loader:'+$ver+' Script:3.5.3'
 #########################
 cls
-$sleep = Get-Random -Maximum 900
+#$sleep = Get-Random -Maximum 900
 start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
