@@ -11,7 +11,7 @@ $ver='Loader:'+$ver+' Script:3.5.3'
 #########################
 cls
 #$sleep = Get-Random -Maximum 900
-start-sleep $sleep
+#start-sleep $sleep
 $badadapters=@('TAP','Cisco AnyConnect','Bluetooth','Fibocom','VirtualBox')
 $virtvendor=@('VMware','Microsoft')
 $mac=''
